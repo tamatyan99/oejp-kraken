@@ -1,4 +1,8 @@
-"""Sensor platform for OEJP Kraken integration."""
+"""Sensor platform for OEJP Kraken integration.
+
+This module provides sensor entities for monitoring electricity usage,
+consumption, and rates from the OEJP Kraken API.
+"""
 
 from __future__ import annotations
 
@@ -12,6 +16,7 @@ from homeassistant.components.sensor import (
 )
 from homeassistant.const import UnitOfEnergy, UnitOfPower
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
@@ -31,10 +36,15 @@ async def async_setup_entry(
 ) -> None:
     """Set up OEJP Kraken sensors from a config entry.
 
+    Creates sensor entities for:
+    - Current power consumption (W)
+    - Today's electricity consumption (kWh)
+    - Current electricity rate (JPY/kWh)
+
     Args:
-        hass: Home Assistant instance
-        entry: Config entry being set up
-        async_add_entities: Callback to add entities
+        hass: The Home Assistant instance.
+        entry: The config entry being set up.
+        async_add_entities: Callback to register entities.
 
     """
     coordinator: OEJPDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id][
@@ -57,10 +67,14 @@ async def async_setup_entry(
 class OEJPBaseSensor(CoordinatorEntity[OEJPDataUpdateCoordinator], SensorEntity):
     """Base class for OEJP Kraken sensors.
 
-    Provides common functionality:
-    - Device info linking
+    Provides common functionality for all OEJP sensors:
+    - Device info linking for grouping in UI
     - Coordinator update handling
     - Unique ID generation
+    - Availability status
+
+    Attributes:
+        _attr_has_entity_name: Enable entity naming from translation.
 
     """
 
@@ -76,10 +90,10 @@ class OEJPBaseSensor(CoordinatorEntity[OEJPDataUpdateCoordinator], SensorEntity)
         """Initialize the base sensor.
 
         Args:
-            coordinator: Data update coordinator
-            entry: Config entry
-            account_info: Account information for device details
-            sensor_type: Type identifier for this sensor
+            coordinator: Data update coordinator for fetching data.
+            entry: Config entry for this sensor.
+            account_info: Account information for device details.
+            sensor_type: Type identifier for this sensor (e.g., 'current_power').
 
         """
         super().__init__(coordinator)
@@ -106,19 +120,44 @@ class OEJPBaseSensor(CoordinatorEntity[OEJPDataUpdateCoordinator], SensorEntity)
     def available(self) -> bool:
         """Return if entity is available.
 
-        Returns False if coordinator has no data or data is None.
+        Returns False if coordinator has no data or the last update failed.
+
+        Returns:
+            True if the sensor has valid data available.
 
         """
         return (
             self.coordinator.last_update_success and self.coordinator.data is not None
         )
 
+    def _get_coordinator_value(self, key: str, default: Any = None) -> Any:
+        """Get a value from coordinator data safely.
+
+        Args:
+            key: The key to look up in coordinator data.
+            default: Default value if key not found or data is None.
+
+        Returns:
+            The value from coordinator data, or the default.
+
+        """
+        if self.coordinator.data is None:
+            return default
+        return self.coordinator.data.get(key, default)
+
 
 class OEJPCurrentPowerSensor(OEJPBaseSensor):
     """Sensor for current power consumption in watts.
 
     Displays real-time power demand from the electricity meter.
-    Updates every 5 minutes via the coordinator.
+    The value is updated every 5 minutes (configurable) via the coordinator.
+
+    Attributes:
+        _attr_device_class: Power device class.
+        _attr_state_class: Measurement state class.
+        _attr_native_unit_of_measurement: Watts.
+        _attr_translation_key: Translation key for UI.
+        _attr_icon: Material Design icon.
 
     """
 
@@ -137,9 +176,9 @@ class OEJPCurrentPowerSensor(OEJPBaseSensor):
         """Initialize the current power sensor.
 
         Args:
-            coordinator: Data update coordinator
-            entry: Config entry
-            account_info: Account information
+            coordinator: Data update coordinator.
+            entry: Config entry.
+            account_info: Account information.
 
         """
         super().__init__(coordinator, entry, account_info, "current_power")
@@ -148,21 +187,16 @@ class OEJPCurrentPowerSensor(OEJPBaseSensor):
     def native_value(self) -> float | None:
         """Return the current power consumption in watts.
 
+        The API may return power in kW, which is converted to W.
+
         Returns:
-            Current power in W, or None if unavailable
+            Current power in W, or None if unavailable.
 
         """
-        if self.coordinator.data is None:
-            return None
-
-        # Get current usage - API may return in kW, convert to W
-        current_usage = self.coordinator.data.get("current_usage")
-        if current_usage is not None:
-            # If data is in kW, convert to W
-            if isinstance(current_usage, (int, float)):
-                # Assume API returns kW for power, convert to W
-                return round(current_usage * 1000, 2)
-
+        current_usage = self._get_coordinator_value("current_usage")
+        if current_usage is not None and isinstance(current_usage, (int, float)):
+            # Convert kW to W if needed (API typically returns kW)
+            return round(current_usage * 1000, 2)
         return None
 
     @property
@@ -170,15 +204,27 @@ class OEJPCurrentPowerSensor(OEJPBaseSensor):
         """Return additional state attributes.
 
         Returns:
-            Dictionary of extra attributes
+            Dictionary containing last_update time.
 
         """
-        attrs = {
-            "last_updated": self.coordinator.data.get("last_updated")
-            if self.coordinator.data
-            else None,
-        }
-        return {k: v for k, v in attrs.items() if v is not None}
+        return self._build_attributes(["last_updated"])
+
+    def _build_attributes(self, keys: list[str]) -> dict[str, Any]:
+        """Build attributes dict from coordinator data.
+
+        Args:
+            keys: List of keys to include in attributes.
+
+        Returns:
+            Dictionary of non-None attributes.
+
+        """
+        attrs: dict[str, Any] = {}
+        for key in keys:
+            value = self._get_coordinator_value(key)
+            if value is not None:
+                attrs[key] = value
+        return attrs
 
 
 class OEJPTodayConsumptionSensor(OEJPBaseSensor):
@@ -186,6 +232,13 @@ class OEJPTodayConsumptionSensor(OEJPBaseSensor):
 
     Displays cumulative consumption for the current day.
     Uses TOTAL_INCREASING state class for Energy Dashboard compatibility.
+
+    Attributes:
+        _attr_device_class: Energy device class.
+        _attr_state_class: Total increasing state class.
+        _attr_native_unit_of_measurement: Kilowatt-hours.
+        _attr_translation_key: Translation key for UI.
+        _attr_icon: Material Design icon.
 
     """
 
@@ -204,9 +257,9 @@ class OEJPTodayConsumptionSensor(OEJPBaseSensor):
         """Initialize the today consumption sensor.
 
         Args:
-            coordinator: Data update coordinator
-            entry: Config entry
-            account_info: Account information
+            coordinator: Data update coordinator.
+            entry: Config entry.
+            account_info: Account information.
 
         """
         super().__init__(coordinator, entry, account_info, "today_consumption")
@@ -215,23 +268,21 @@ class OEJPTodayConsumptionSensor(OEJPBaseSensor):
     def native_value(self) -> float | None:
         """Return today's cumulative consumption in kWh.
 
+        First checks daily_consumption, then falls back to total_consumption.
+
         Returns:
-            Today's consumption in kWh, or None if unavailable
+            Today's consumption in kWh, or None if unavailable.
 
         """
-        if self.coordinator.data is None:
-            return None
-
-        # Get daily consumption data
-        daily_consumption = self.coordinator.data.get("daily_consumption", {})
+        # Try daily consumption first
+        daily_consumption = self._get_coordinator_value("daily_consumption", {})
         if daily_consumption:
-            # Get today's consumption value
             today_value = daily_consumption.get("consumption")
             if today_value is not None and isinstance(today_value, (int, float)):
                 return round(today_value, 3)
 
-        # Fallback to total_consumption if daily not available
-        total_consumption = self.coordinator.data.get("total_consumption")
+        # Fallback to total_consumption
+        total_consumption = self._get_coordinator_value("total_consumption")
         if total_consumption is not None and isinstance(
             total_consumption, (int, float)
         ):
@@ -243,30 +294,24 @@ class OEJPTodayConsumptionSensor(OEJPBaseSensor):
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return additional state attributes.
 
+        Includes daily consumption breakdown if available.
+
         Returns:
-            Dictionary of extra attributes including daily breakdown
+            Dictionary containing consumption details.
 
         """
         attrs: dict[str, Any] = {}
 
-        if self.coordinator.data is None:
-            return attrs
-
         # Add last update time
-        if last_updated := self.coordinator.data.get("last_updated"):
+        if last_updated := self._get_coordinator_value("last_updated"):
             attrs["last_updated"] = last_updated
 
-        # Add daily consumption details if available
-        daily_consumption = self.coordinator.data.get("daily_consumption", {})
+        # Add daily consumption details
+        daily_consumption = self._get_coordinator_value("daily_consumption", {})
         if daily_consumption:
-            if "date" in daily_consumption:
-                attrs["date"] = daily_consumption["date"]
-            if "peak_consumption" in daily_consumption:
-                attrs["peak_consumption"] = daily_consumption["peak_consumption"]
-            if "off_peak_consumption" in daily_consumption:
-                attrs["off_peak_consumption"] = daily_consumption[
-                    "off_peak_consumption"
-                ]
+            for key in ["date", "peak_consumption", "off_peak_consumption"]:
+                if key in daily_consumption:
+                    attrs[key] = daily_consumption[key]
 
         return attrs
 
@@ -276,6 +321,13 @@ class OEJPCurrentRateSensor(OEJPBaseSensor):
 
     Displays the current rate per kilowatt-hour.
     Uses monetary device class for currency formatting.
+
+    Attributes:
+        _attr_device_class: Monetary device class.
+        _attr_state_class: Measurement state class.
+        _attr_native_unit_of_measurement: JPY/kWh.
+        _attr_translation_key: Translation key for UI.
+        _attr_icon: Material Design icon.
 
     """
 
@@ -294,9 +346,9 @@ class OEJPCurrentRateSensor(OEJPBaseSensor):
         """Initialize the current rate sensor.
 
         Args:
-            coordinator: Data update coordinator
-            entry: Config entry
-            account_info: Account information
+            coordinator: Data update coordinator.
+            entry: Config entry.
+            account_info: Account information.
 
         """
         super().__init__(coordinator, entry, account_info, "current_rate")
@@ -306,46 +358,35 @@ class OEJPCurrentRateSensor(OEJPBaseSensor):
         """Return the current electricity rate in JPY/kWh.
 
         Returns:
-            Current rate in JPY/kWh, or None if unavailable
+            Current rate in JPY/kWh, or None if unavailable.
 
         """
-        if self.coordinator.data is None:
-            return None
-
-        # Get current rate
-        current_rate = self.coordinator.data.get("current_rate")
+        current_rate = self._get_coordinator_value("current_rate")
         if current_rate is not None and isinstance(current_rate, (int, float)):
             return round(current_rate, 4)
-
         return None
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         """Return additional state attributes.
 
+        Includes rate period information if available.
+
         Returns:
-            Dictionary of extra attributes including rate period info
+            Dictionary containing rate details.
 
         """
         attrs: dict[str, Any] = {}
 
-        if self.coordinator.data is None:
-            return attrs
-
         # Add last update time
-        if last_updated := self.coordinator.data.get("last_updated"):
+        if last_updated := self._get_coordinator_value("last_updated"):
             attrs["last_updated"] = last_updated
 
-        # Add rate details if available
-        rate_info = self.coordinator.data.get("rate_info", {})
+        # Add rate details
+        rate_info = self._get_coordinator_value("rate_info", {})
         if rate_info:
-            if "tariff_name" in rate_info:
-                attrs["tariff_name"] = rate_info["tariff_name"]
-            if "rate_period" in rate_info:
-                attrs["rate_period"] = rate_info["rate_period"]
-            if "peak_rate" in rate_info:
-                attrs["peak_rate"] = rate_info["peak_rate"]
-            if "off_peak_rate" in rate_info:
-                attrs["off_peak_rate"] = rate_info["off_peak_rate"]
+            for key in ["tariff_name", "rate_period", "peak_rate", "off_peak_rate"]:
+                if key in rate_info:
+                    attrs[key] = rate_info[key]
 
         return attrs
