@@ -1,0 +1,11 @@
+{
+  "domain": "oejp_kraken",
+  "name": "OEJP Kraken",
+  "codeowners": ["@your-github-username"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/your-username/oejp-kraken",
+  "iot_class": "cloud_polling",
+  "requirements": ["aiohttp>=3.8.0"],
+  "version": "1.0.0"
+}

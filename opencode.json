@@ -1,0 +1,14 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "homeassistant": {
+      "type": "local",
+      "command": ["uvx", "ha-mcp"],
+      "enabled": true,
+      "environment": {
+        "HOMEASSISTANT_URL": "http://10.1.2.2:8123",
+        "HOMEASSISTANT_TOKEN": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI2NTYzODhkOTI3NjA0ZTVjOTAzNmVhN2QwYzkwOWZhYSIsImlhdCI6MTc3MTk3NDY3OSwiZXhwIjoyMDg3MzM0Njc5fQ.rroUxA-1AJhj2OsOcYhOlNNbPbr2v9O1cBhLJHarNxA"
+      }
+    }
+  }
+}

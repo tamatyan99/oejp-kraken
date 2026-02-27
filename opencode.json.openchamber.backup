@@ -1,0 +1,23 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "ha": {
+      "type": "local",
+      "command": [
+        "{",
+        "  \"mcpServers\": {",
+        "    \"Home Assistant\": {",
+        "      \"command\": \"uvx\",",
+        "      \"args\": [\"ha-mcp@latest\"],",
+        "      \"env\": {",
+        "        \"HOMEASSISTANT_URL\": \"http://homeassistant.local:8123\",",
+        "        \"HOMEASSISTANT_TOKEN\": \"your_long_lived_token\"",
+        "      }",
+        "    }",
+        "  }",
+        "}"
+      ],
+      "enabled": true
+    }
+  }
+}

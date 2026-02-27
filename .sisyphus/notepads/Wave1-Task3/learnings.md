@@ -1,0 +1,5 @@
+- Wave1 Task3: OEJP Kraken integration skeleton created.
+- Created skeleton under custom_components/oejp_kraken/
+- Files added: manifest.json, const.py, __init__.py, translations/ja.json
+- Evidence file created at .sisyphus/evidence/task-3-structure.txt
+- Next steps: implement real integration logic in subsequent waves

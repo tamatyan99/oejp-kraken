@@ -1,0 +1,34 @@
+Task 3 Evidence: Basic File Structure Creation
+
+Date: 2026-02-27
+Task: Create initial integration structure
+
+Files Created:
+1. custom_components/oejp_kraken/__init__.py - Integration entry point
+2. custom_components/oejp_kraken/manifest.json - Integration manifest
+3. custom_components/oejp_kraken/const.py - Constants and configuration
+4. custom_components/oejp_kraken/translations/ja.json - Japanese translations
+
+Directory Structure:
+custom_components/oejp_kraken/
+├── __init__.py
+├── const.py
+├── manifest.json
+└── translations/
+    └── ja.json
+
+Manifest Details:
+- Domain: oejp_kraken
+- Name: OEJP Kraken
+- Version: 1.0.0
+- IoT Class: cloud_polling
+- Requirements: aiohttp>=3.8.0
+
+Constants Defined:
+- DOMAIN = "oejp_kraken"
+- CONF_EMAIL = "email"
+- CONF_PASSWORD = "password"
+- DEFAULT_UPDATE_INTERVAL = 300 (5 minutes)
+- API_BASE_URL = "https://api.oejp-kraken.energy/v1/graphql/"
+
+Status: COMPLETED

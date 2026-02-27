@@ -1,0 +1,7 @@
+{
+  "name": "OEJP Kraken",
+  "content_in_root": false,
+  "filename": "oejp_kraken",
+  "render_readme": true,
+  "domain": ["sensor"]
+}

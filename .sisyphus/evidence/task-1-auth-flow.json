@@ -1,0 +1,91 @@
+{
+  "authentication_flow": {
+    "mutation_name": "obtainKrakenToken",
+    "description": "Create a Kraken Token (JWT) for authentication",
+    "endpoint": "https://api.oejp-kraken.energy/v1/graphql/"
+  },
+  "input_type": "ObtainJSONWebTokenInput",
+  "input_fields": [
+    {
+      "name": "email",
+      "type": "String",
+      "description": "Email address of the account user. Use with 'password' field.",
+      "required": false,
+      "usage": "credentials_login"
+    },
+    {
+      "name": "password",
+      "type": "String", 
+      "description": "Password of the account user. Use with 'email' field.",
+      "required": false,
+      "usage": "credentials_login"
+    },
+    {
+      "name": "APIKey",
+      "type": "String",
+      "description": "API key of the account user. Use standalone, don't provide a second input field.",
+      "required": false,
+      "usage": "api_key_auth"
+    },
+    {
+      "name": "organizationSecretKey",
+      "type": "String",
+      "description": "Live secret key of an third-party organization. Use standalone.",
+      "required": false,
+      "usage": "third_party_auth"
+    },
+    {
+      "name": "preSignedKey",
+      "type": "String",
+      "description": "Short-lived, temporary key (that's pre-signed). Use standalone.",
+      "required": false,
+      "usage": "temporary_auth"
+    },
+    {
+      "name": "refreshToken",
+      "type": "String",
+      "description": "The refresh token that can be used to extend the expiry claim of a Kraken token.",
+      "required": false,
+      "usage": "token_refresh"
+    },
+    {
+      "name": "captchaResponse",
+      "type": "String",
+      "description": "The response from the CAPTCHA challenge. Use with 'email' and 'password' fields.",
+      "required": false,
+      "usage": "captcha_verification"
+    }
+  ],
+  "auth_methods": {
+    "method_1_credentials": {
+      "description": "Login with email and password",
+      "input": ["email", "password"],
+      "note": "May require captchaResponse"
+    },
+    "method_2_api_key": {
+      "description": "Login with API key from user profile",
+      "input": ["APIKey"],
+      "note": "Recommended for Home Assistant integration"
+    },
+    "method_3_refresh": {
+      "description": "Refresh existing token",
+      "input": ["refreshToken"],
+      "note": "Use to extend session without re-auth"
+    }
+  },
+  "example_mutation": {
+    "with_api_key": "mutation { obtainKrakenToken(input: { APIKey: \"YOUR_API_KEY\" }) { token refreshToken payload } }",
+    "with_credentials": "mutation { obtainKrakenToken(input: { email: \"user@example.com\", password: \"your_password\" }) { token refreshToken payload } }"
+  },
+  "possible_errors": [
+    { "code": "KT-CT-1135", "description": "Invalid data" },
+    { "code": "KT-CT-1134", "description": "Invalid data" },
+    { "code": "KT-CT-1113", "description": "Disabled GraphQL field requested" }
+  ],
+  "home_assistant_recommendation": {
+    "auth_method": "APIKey",
+    "reason": "API keys are stable, don't expire frequently, and are designed for programmatic access",
+    "storage": "Store in Home Assistant secrets.yaml or integration config flow",
+    "refresh_strategy": "Use refreshToken to extend session, fallback to APIKey if refresh fails"
+  }
+}

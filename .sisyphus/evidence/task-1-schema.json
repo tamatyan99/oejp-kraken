@@ -1,0 +1,4211 @@
+{
+  "api_endpoint": "https://api.oejp-kraken.energy/v1/graphql/",
+  "auth_endpoint": "https://auth.oejp-kraken.energy",
+  "constraints": {
+    "query_complexity_limit": 200,
+    "node_limit": 10000,
+    "rate_limit": "50,000 points/hour"
+  },
+  "key_types": {
+    "authentication": {
+      "ObtainJSONWebTokenInput": {
+        "kind": "INPUT_OBJECT",
+        "description": "The input type for obtaining a Kraken Token (JWT).\n\nThe currently supported inputs are:\n- account user email/password combination\n- account user API key\n- organization live secret key\n- pre-signed key\n- refresh token",
+        "fields": null
+      },
+      "obtainKrakenToken": null
+    },
+    "data_access": {
+      "AccountUser": {
+        "kind": "OBJECT",
+        "description": "User objects are the core of the authentication system. They typically represent a customer who manages a portfolio of one or more accounts.",
+        "fields": [
+          {
+            "name": "id",
+            "description": null,
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "number",
+            "description": "A code that uniquely identifies the account user.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "accounts",
+            "description": "List of accounts that the user is linked to either via portfolio role or account role.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "AccountInterface",
+                "kind": "INTERFACE",
+                "ofType": null
+              }
+            },
+            "args": [
+              {
+                "name": "allowedBrandCodes",
+                "description": "Optionally filter the user's accounts to only return those linked to portfolios on the specified brands.",
+                "type": {
+                  "name": null,
+                  "kind": "LIST",
+                  "ofType": {
+                    "name": "BrandChoices"
+                  }
+                }
+              },
+              {
+                "name": "restrictToPublicFacingBrands",
+                "description": "Optionally restrict user accounts to only return those linked to portfolios on public facing brands.",
+                "type": {
+                  "name": "Boolean",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "restrictToAccountNumbers",
+                "description": "Optionally restrict user accounts to only return those with the specified account numbers.",
+                "type": {
+                  "name": null,
+                  "kind": "LIST",
+                  "ofType": {
+                    "name": "String"
+                  }
+                }
+              },
+              {
+                "name": "excludeAccountTypes",
+                "description": "Optionally exclude accounts with any of the given account types.",
+                "type": {
+                  "name": null,
+                  "kind": "LIST",
+                  "ofType": {
+                    "name": "AccountTypeChoices"
+                  }
+                }
+              },
+              {
+                "name": "excludeAccountsWithoutAgreements",
+                "description": "Optionally exclude accounts that have never had an agreement.",
+                "type": {
+                  "name": "Boolean",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "givenName",
+            "description": null,
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "familyName",
+            "description": null,
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "email",
+            "description": null,
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "mobile",
+            "description": null,
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "landline",
+            "description": null,
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "title",
+            "description": null,
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "pronouns",
+            "description": "The user's pronouns e.g. 'she/her', 'he/him', 'they/them'.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "isDeceased",
+            "description": "Designates whether this user is deceased.",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Boolean",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "liveSecretKey",
+            "description": "The user's secret key to access the Developer API.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "createdAt",
+            "description": null,
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "DateTime",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "portfolios",
+            "description": "List of portfolios that the user is linked to via their portfolio roles.",
+            "type": {
+              "name": "PortfolioConnectionTypeConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "allowedBrandCodes",
+                "description": "Optionally filter the user's portfolios to only return those linked to specified brands.",
+                "type": {
+                  "name": null,
+                  "kind": "LIST",
+                  "ofType": {
+                    "name": "BrandChoices"
+                  }
+                }
+              },
+              {
+                "name": "restrictToPublicFacingBrands",
+                "description": "Optionally restrict the user portfolios to only return those linked to public facing brands.",
+                "type": {
+                  "name": "Boolean",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "address",
+            "description": "This user's address.",
+            "type": {
+              "name": "RichAddressType",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "dateOfBirth",
+            "description": "AccountUser's date of birth.",
+            "type": {
+              "name": "Date",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "label",
+            "description": "A free text field to help identifying the customer (e.g. for a job title).",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "isActive",
+            "description": "Whether this user is active.",
+            "type": {
+              "name": "Boolean",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "details",
+            "description": "List of details linked to this user.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "AccountUserDetailType",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "permissions",
+            "description": "Holds information about the permissions of the current viewer.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "AccountUserPermission",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "fullName",
+            "description": "The user's full name.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "preferredName",
+            "description": "The user's preferred name.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "portfolioIds",
+            "description": "List of portfolio ids that the user is linked to via their portfolio roles.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "args": [
+              {
+                "name": "allowedBrandCodes",
+                "description": "Optionally filter the user's portfolios to only return those linked to specified brands.",
+                "type": {
+                  "name": null,
+                  "kind": "LIST",
+                  "ofType": {
+                    "name": "BrandChoices"
+                  }
+                }
+              },
+              {
+                "name": "restrictToPublicFacingBrands",
+                "description": "Optionally restrict the user portfolios to only return those linked to public facing brands.",
+                "type": {
+                  "name": "Boolean",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "businesses",
+            "description": "List of businesses that the user has access to through their granted roles.",
+            "type": {
+              "name": "BusinessConnectionTypeConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "specialCircumstances",
+            "description": null,
+            "type": {
+              "name": "SpecialCircumstancesType",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "preferences",
+            "description": null,
+            "type": {
+              "name": "AccountUserCommsPreferences",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "alternativePhoneNumbers",
+            "description": "List of alternative phone numbers for the account user.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "hasFamilyIssues",
+            "description": "Whether there are family issues.",
+            "type": {
+              "name": "Boolean",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "isInHardship",
+            "description": "True if user is linked to an account with an active hardship agreement.",
+            "type": {
+              "name": "Boolean",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "accountUserRoles",
+            "description": "List of roles a user has for each account they're linked to.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "AccountUserRoleType",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": [
+              {
+                "name": "accountNumber",
+                "description": "Optionally filter the user's account roles to only return those linked to specific accounts.",
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "portfolioUserRoles",
+            "description": "List of roles a user has for each portfolio they're linked to.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "PortfolioUserRoleType",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": [
+              {
+                "name": "portfolioNumber",
+                "description": "Optionally filter the portfolio's user roles to only return those linked to a specific portfolio.",
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "accountNumber",
+                "description": "Return the user portfolio roles for this account's portfolio.",
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "consents",
+            "description": "Consents linked to this user.",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST",
+                "ofType": {
+                  "name": null,
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "name": "ConsentType"
+                  }
+                }
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "paymentMethods",
+            "description": "List payment instructions linked to this user.",
+            "type": {
+              "name": "PaymentInstructionConnectionTypeConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "validAt",
+                "description": "Optionally return only payment instructions valid at the given datetime.",
+                "type": {
+                  "name": "DateTime",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "statuses",
+                "description": "Optionally filter the payment instructions by status.",
+                "type": {
+                  "name": null,
+                  "kind": "LIST",
+                  "ofType": {
+                    "name": "PaymentInstructionStatus"
+                  }
+                }
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "accountUserMeta",
+            "description": "Additional user details, if they exist.",
+            "type": {
+              "name": "AccountUserMeta",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "externalIdAccountLinks",
+            "description": "List of currently active (LINKED) external vendor ID linkages for this user. Due to database constraints, each user can only have one active linkage per vendor.",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST",
+                "ofType": {
+                  "name": null,
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "name": "ExternalIdAccountLink"
+                  }
+                }
+              }
+            },
+            "args": []
+          }
+        ]
+      },
+      "Account": {
+        "kind": "OBJECT",
+        "description": "The account object can be one of several attached to a `Portfolio` (which usually has an `AccountUser` which is used to authenticate access to the `Portfolio`'s accounts). Typically a person has a single account attached to a portfolio and properties on the same account will appear on the same bill. Where separate bills are desired, multiple accounts  are created and added to the same portfolio of accounts.",
+        "fields": [
+          {
+            "name": "id",
+            "description": null,
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "number",
+            "description": "A code that uniquely identifies the account.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "status",
+            "description": "The current status of the account.",
+            "type": {
+              "name": "AccountStatus",
+              "kind": "ENUM",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "paymentSchedules",
+            "description": "The schedules that describe how we would expect to take payments for an account on a given month.",
+            "type": {
+              "name": "PaymentScheduleConnectionTypeConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "activeOnDate",
+                "description": null,
+                "type": {
+                  "name": "Date",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "active",
+                "description": null,
+                "type": {
+                  "name": "Boolean",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "includeDormant",
+                "description": "If false, we remove the currently valid schedule if it has already fulfilled its purpose and will have no further impact on customer payments, along with any schedules which are not valid from today.",
+                "type": {
+                  "name": "Boolean",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "ledgerType",
+                "description": "The ledger to return transactions from.",
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "ledgerNumber",
+                "description": "The ledger number to return the payment schedules from.",
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "reason",
+                "description": null,
+                "type": {
+                  "name": "PaymentScheduleReasonOptions",
+                  "kind": "ENUM",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "users",
+            "description": null,
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST",
+                "ofType": {
+                  "name": null,
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "name": "AccountUser"
+                  }
+                }
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "complaints",
+            "description": "The complaints associated with an account.",
+            "type": {
+              "name": "ComplaintConnectionTypeConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "brand",
+            "description": "The brand of the account.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "balance",
+            "description": "The current account balance.",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Int",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "args": [
+              {
+                "name": "includeAllLedgers",
+                "description": "If this variable is set to true, the balance will be calculated based on the sum of balances on all ledgers configured to contribute to this account's balance. Otherwise, only the main ledger's balance will be fetched (legacy behaviour). If you are unsure, set this value to true.",
+                "type": {
+                  "name": "Boolean",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "overdueBalance",
+            "description": "The current account overdue balance.",
+            "type": {
+              "name": "Int",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "urn",
+            "description": "Unique reference number from a 3rd party enrolment.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "billingName",
+            "description": "The billing name of the account.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "billingSubName",
+            "description": "The billing sub name of the account.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "billingEmail",
+            "description": "The billing email of the account.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "billingAddress",
+            "description": "The billing address of the account.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "billingAddressLine1",
+            "description": null,
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "billingAddressLine2",
+            "description": null,
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "billingAddressLine3",
+            "description": null,
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "billingAddressLine4",
+            "description": null,
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "billingAddressLine5",
+            "description": null,
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "billingAddressPostcode",
+            "description": null,
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "billingCountryCode",
+            "description": null,
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "billingDeliveryPointIdentifier",
+            "description": null,
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "splitBillingAddress",
+            "description": "List of billing address lines.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "address",
+            "description": "\nThe billing address of this account, stored in the new\nlibaddressinput-based format.\n\nNote that `name` and `organization` are very unlikely to be\nsupplied here; the `billing_name` field on the account\nitself is generally used for that purpose instead.\n",
+            "type": {
+              "name": "RichAddressType",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "portfolio",
+            "description": "The portfolio this account is linked to.",
+            "type": {
+              "name": "PortfolioType",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "ledgers",
+            "description": "Ledgers provide the foundation of bookkeeping functionality. Similar to a bank account, they allow us to keep track of financial activity on a particular customer account.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "LedgerType",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": [
+              {
+                "name": "ledgerNumber",
+                "description": "The ledger to return by its number.",
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "includeDebtLedgers",
+                "description": "If this variable is set to false, debt ledgerswill be filtered out of the ledgers list.",
+                "type": {
+                  "name": "Boolean",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "metadata",
+            "description": "Metadata associated with the account.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "Metadata",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "canRequestRefund",
+            "description": "Whether the account can request a credit refund.",
+            "type": {
+              "name": "Boolean",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "requestRefundEligibility",
+            "description": "Details about the eligibility status for requesting a refund.",
+            "type": {
+              "name": "RequestRefundEligibilityType",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "ledgerNumber",
+                "description": "The ledger number to check refund eligibility.",
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "payments",
+            "description": "The payments made into an account from a payment instruction.",
+            "type": {
+              "name": "AccountPaymentConnectionTypeConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "ledgerNumber",
+                "description": "**WARNING: Will be mandatory in future versions**\n\nThe number of the ledger to return payments from.",
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "status",
+                "description": null,
+                "type": {
+                  "name": "AccountPaymentStatusOptions",
+                  "kind": "ENUM",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "reason",
+                "description": "Filter for payments that were taken for a particular reason.",
+                "type": {
+                  "name": "PaymentReasonOptions",
+                  "kind": "ENUM",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "includePromises",
+                "description": "Whether to include payment promises (of any kind: made, broken or fulfilled) or not. The default is to include them.",
+                "type": {
+                  "name": "Boolean",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "repayments",
+            "description": "The repayments that have been requested for this account.",
+            "type": {
+              "name": "AccountRepaymentConnectionTypeConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "statuses",
+                "description": "Only return repayments whose status matches one of these statuses.",
+                "type": {
+                  "name": null,
+                  "kind": "LIST",
+                  "ofType": {
+                    "name": "AccountRepaymentStatusOptions"
+                  }
+                }
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "paymentPlans",
+            "description": "The payment plans that have been created for this account.",
+            "type": {
+              "name": "PaymentPlanConnectionTypeConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "paginatedPaymentForecast",
+            "description": "Paginated payment forecasts for an account. Starts from today's date (inclusive). The interface supports `last` but does not guarantee 'lastness'.",
+            "type": {
+              "name": "PaymentForecastConnectionTypeConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "dateTo",
+                "description": "The end date to retrieve forecasts for. This end date is inclusive.",
+                "type": {
+                  "name": "Date",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "ledgerNumber",
+                "description": "The number of the ledger to return payment forecasts from. Defaults to the main ledger when no number is passed.",
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "referrals",
+            "description": "The referrals created by this account.",
+            "type": {
+              "name": "ReferralConnectionTypeConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "status",
+                "description": "Only return referrals with the specified status. Return all referrals by default.",
+                "type": {
+                  "name": "ReferralStatus",
+                  "kind": "ENUM",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "referralsCreated",
+            "description": "Number of referrals created by this account.",
+            "type": {
+              "name": "Int",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "rewards",
+            "description": "The rewards applied to this account.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "RewardType",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "activeReferralSchemes",
+            "description": "The referral schemes currently active for this account.",
+            "type": {
+              "name": "ReferralSchemeTypes",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "transactions",
+            "description": "Fetch transactions that have taken place on the account.",
+            "type": {
+              "name": "TransactionConnectionTypeConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "transactionTypes",
+                "description": "Include only these specific transaction types in the result.",
+                "type": {
+                  "name": null,
+                  "kind": "LIST",
+                  "ofType": {
+                    "name": "TransactionTypeFilter"
+                  }
+                }
+              },
+              {
+                "name": "transactionTypesExcluded",
+                "description": "Exclude these specific transaction types from the result.",
+                "type": {
+                  "name": null,
+                  "kind": "LIST",
+                  "ofType": {
+                    "name": "TransactionTypeFilter"
+                  }
+                }
+              },
+              {
+                "name": "ledgerNumber",
+                "description": "The number of the ledger to return transactions from.",
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "includeAllLedgers",
+                "description": "In a multi-ledger scenario, include all ledgers' transactions if `true`. Analogously, if `false` and no `ledgerId` or `ledger_number` argument is present, the list of transactions defaults to the main ledger (legacy behaviour).",
+                "type": {
+                  "name": "Boolean",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "fromDate",
+                "description": "\nOptional date representing the beginning of the postedDate range filter.\nThis date value is inclusive.\n",
+                "type": {
+                  "name": "Date",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "toDate",
+                "description": "\nOptional date representing the end of the postedDate range filter.\nThis date value is exclusive.\n",
+                "type": {
+                  "name": "Date",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "orderBy",
+                "description": "The order in which to return the transactions.",
+                "type": {
+                  "name": "TransactionsOrderBy",
+                  "kind": "ENUM",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "offset",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "provisionalTransactions",
+            "description": null,
+            "type": {
+              "name": "ProvisionalTransactionConnectionTypeConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "annualStatements",
+            "description": "Fetch annual statements for the account.",
+            "type": {
+              "name": "AnnualStatementConnectionTypeConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "bills",
+            "description": "Fetch issued bills (invoices/statements) for the account.",
+            "type": {
+              "name": "BillConnectionTypeConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "includeBillsWithoutPDF",
+                "description": "Include bills without PDFs.",
+                "type": {
+                  "name": "Boolean",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "includeOpenStatements",
+                "description": "\nInclude open statements. This flag needs to be used along with\nincludeBillsWithoutPDF=false otherwise results will prove unexpected.\n",
+                "type": {
+                  "name": "Boolean",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "includeHeldStatements",
+                "description": "Include held statements within the results.",
+                "type": {
+                  "name": "Boolean",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "includeHistoricStatements",
+                "description": "Include pre-Kraken / historical statements within the results.",
+                "type": {
+                  "name": "Boolean",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "onlyCurrentEmail",
+                "description": "Only include bills emailed to the current user's email.",
+                "type": {
+                  "name": "Boolean",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "ledgerNumber",
+                "description": "The number of a ledger for the bill. When provided, only period- or item-based documents for this account that are linked to that ledger are returned; collective bills and legacy bills are excluded. Historic/pre-Kraken bills are unaffected by this filter and are included or excluded solely by includeHistoricStatements.",
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "fromDate",
+                "description": "Optional date representing the beginning of the search results. This date value is inclusive.",
+                "type": {
+                  "name": "Date",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "toDate",
+                "description": "Optional date representing the end of the search results. This date value is exclusive.",
+                "type": {
+                  "name": "Date",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "issuedFromDate",
+                "description": "Optional date representing the beginning of the search results based on issued date. This date value is inclusive.",
+                "type": {
+                  "name": "Date",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "issuedToDate",
+                "description": "Optional date representing the end of the search results based on issued date. This date value is exclusive.",
+                "type": {
+                  "name": "Date",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "orderBy",
+                "description": "The order in which to return the bills.",
+                "type": {
+                  "name": "BillsOrderBy",
+                  "kind": "ENUM",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "offset",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "billingOptions",
+            "description": "Information about the account's billing cycle.",
+            "type": {
+              "name": "BillingOptionsType",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "bill",
+            "description": "Fetch a specific issued bill (invoice/statement) for the account.",
+            "type": {
+              "name": "BillInterface",
+              "kind": "INTERFACE",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "id",
+                "description": "The unique identifier of the bill.",
+                "type": {
+                  "name": "ID",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "identifier",
+                "description": "The unique identifier of the bill. A pending billing document will not have an identifier yet.                 And not all finalized billing documents will have an identifier. Prefer using the id field unless advised by Kraken.",
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "billType",
+                "description": null,
+                "type": {
+                  "name": "BillTypeEnum",
+                  "kind": "ENUM",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "ledgerNumber",
+                "description": "The number of the ledger for the bill. When provided, only the period- or item-based documentfor this account that is linked to that ledger is returned; pre-kraken, collective bills, and legacy bills are excluded.",
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "directDebitInstructions",
+            "description": "The direct debit instructions of the account",
+            "type": {
+              "name": "DirectDebitInstructionConnectionTypeConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "statuses",
+                "description": "Filter the direct debit instructions by status",
+                "type": {
+                  "name": null,
+                  "kind": "LIST",
+                  "ofType": {
+                    "name": "DirectDebitInstructionStatus"
+                  }
+                }
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "paymentMethods",
+            "description": "The payment instructions of the account.",
+            "type": {
+              "name": "PaymentInstructionConnectionTypeConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "statuses",
+                "description": "Filter the payment instructions by status.",
+                "type": {
+                  "name": null,
+                  "kind": "LIST",
+                  "ofType": {
+                    "name": "PaymentInstructionStatus"
+                  }
+                }
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "events",
+            "description": "The account events that were recorded for the account.",
+            "type": {
+              "name": "AccountEventConnectionTypeConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "eventTypes",
+                "description": "Filter the account events by their type.",
+                "type": {
+                  "name": null,
+                  "kind": "LIST",
+                  "ofType": {
+                    "name": "AccountEventType"
+                  }
+                }
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "applications",
+            "description": "Applications by this account to become our customer. More recent applications will be listed first.",
+            "type": {
+              "name": "AccountApplicationConnectionTypeConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "status",
+                "description": "The account application status.",
+                "type": {
+                  "name": "AccountApplicationStatus",
+                  "kind": "ENUM",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "accountType",
+            "description": "The type of account.",
+            "type": {
+              "name": "AccountTypeChoices",
+              "kind": "ENUM",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "business",
+            "description": "Business info related to a business account.",
+            "type": {
+              "name": "BusinessType",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "commsDeliveryPreference",
+            "description": "The method the account has specified they prefer we contact them.",
+            "type": {
+              "name": "CommsDeliveryPreference",
+              "kind": "ENUM",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "documentAccessibility",
+            "description": "The document accessibility preference of the account.",
+            "type": {
+              "name": "DocumentAccessibilityChoices",
+              "kind": "ENUM",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "references",
+            "description": "Account references linked to this account.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "AccountReferenceType",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "fileAttachments",
+            "description": "Files attached to this account.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "AccountFileAttachment",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "paginatedFileAttachments",
+            "description": "Files attached to this account.",
+            "type": {
+              "name": "AccountFileAttachmentConnectionTypeConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "id",
+                "description": "File attachment id.",
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "category",
+                "description": "File attachment category.",
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "maximumRefund",
+            "description": "The maximum amount a customer is allowed to request as a refund and the reason why that's the maximum amount.",
+            "type": {
+              "name": "MaximumRefundType",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "ledgerNumber",
+                "description": "The ledger number to calculate maximum refund for.",
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "campaigns",
+            "description": "The campaigns associated with an account.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "AccountCampaignType",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "isInHardship",
+            "description": "True if there is an active Hardship Agreement for this account. False otherwise.",
+            "type": {
+              "name": "Boolean",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "activeHardshipAgreements",
+            "description": "List of active hardship agreements for the user when is_in_hardship is True.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "HardshipAgreementType",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "notes",
+            "description": "Notes for the account.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "AccountNoteType",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "contributionAgreements",
+            "description": "Contribution agreements for account.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "ContributionAgreementType",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "assistanceAgreements",
+            "description": "Assistance agreements for account.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "AssistanceAgreementType",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "debtCollectionProceedings",
+            "description": "Debt collection proceedings for account.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "DebtCollectionProceedingType",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "createdAt",
+            "description": "The datetime that the account was originally created.",
+            "type": {
+              "name": "DateTime",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "preferredLanguageForComms",
+            "description": "The language that the account preferred for communications.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "consents",
+            "description": "Consents linked to this account.",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST",
+                "ofType": {
+                  "name": null,
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "name": "ConsentType"
+                  }
+                }
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "reminders",
+            "description": "The reminders associated with an account.",
+            "type": {
+              "name": "AccountReminderConnectionTypeConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "properties",
+            "description": "Properties linked to the account now and in the future.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "Property",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": [
+              {
+                "name": "activeFrom",
+                "description": "Returns properties that have an effective period that ends at or after the given activeFrom datetime.",
+                "type": {
+                  "name": "DateTime",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "marketSupplyAgreements",
+            "description": "Retrieve all market supply agreements under this account. Note that when `active` is set to false it actually means 'return both active and inactive agreements'.",
+            "type": {
+              "name": "AgreementConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "id",
+                "description": "Filter the list to the agreement with this id.",
+                "type": {
+                  "name": "ID",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "active",
+                "description": "Whether to return active agreements only.",
+                "type": {
+                  "name": "Boolean",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "canModifyPayments",
+            "description": "Data about whether or not an account can modify their payments.",
+            "type": {
+              "name": "CanModifyPaymentsType",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "consentData",
+            "description": "A JSON object containing consent information.",
+            "type": {
+              "name": "GenericScalar",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "paymentSchedule",
+            "description": "Current active payment schedule detail of the account.",
+            "type": {
+              "name": "PaymentScheduleType",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "paymentInstructions",
+            "description": "The payment instructions of the account",
+            "type": {
+              "name": "PaymentInstructionConnectionTypeConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "statuses",
+                "description": "Filter the payment instructions by status",
+                "type": {
+                  "name": null,
+                  "kind": "LIST",
+                  "ofType": {
+                    "name": "PaymentInstructionStatus"
+                  }
+                }
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "paymentPreferences",
+            "description": "The customer's preferred payment methods.",
+            "type": {
+              "name": "PaymentPreferenceConnectionTypeConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "availableDemandResponseCampaignsForRegistration",
+            "description": "A list of available demand response campaigns in which this account can participate.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "demandResponseCampaignParticipants",
+            "description": "The demand response campaigns associated with an account.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "DemandResponseCampaignParticipantType",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "canBeWithdrawn",
+            "description": "Check whether the account can be withdrawn.",
+            "type": {
+              "name": "Boolean",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "hasActiveAgreement",
+            "description": "Check whether the account has an active energy agreement.",
+            "type": {
+              "name": "Boolean",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "hasFutureAgreement",
+            "description": "Check whether the account has a future energy agreement.",
+            "type": {
+              "name": "Boolean",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "lifelineAgencyApplication",
+            "description": "Lifeline Agency application.",
+            "type": {
+              "name": "LifelineAgencyApplication",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          }
+        ]
+      },
+      "Property": {
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "description": null,
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "address",
+            "description": "The address of the property, formatted into a single string.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "richAddress",
+            "description": "Property rich address.",
+            "type": {
+              "name": "PropertyRichAddressType",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "splitAddress",
+            "description": "List of address lines.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "label",
+            "description": "An optional label for the property.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "occupancyPeriods",
+            "description": "Time periods during which the property is associated with an account. Useful to display information about house-moves, as performing a move out of a property will set the end date for the occupancy period.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "OccupancyPeriodType",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "coordinates",
+            "description": "Coordinates for the property, useful for displaying the property on a map.",
+            "type": {
+              "name": "CoordinatesType",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "embeddedNetwork",
+            "description": "The embedded network this property belongs to, if any.",
+            "type": {
+              "name": "EmbeddedNetworkType",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "measurements",
+            "description": "Measurements at a property",
+            "type": {
+              "name": "MeasurementConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "startAt",
+                "description": "Defaults to the far past which will return the oldest readings.",
+                "type": {
+                  "name": "DateTime",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "endAt",
+                "description": "Defaults to the far future which will return the most recent readings.",
+                "type": {
+                  "name": "DateTime",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "startOn",
+                "description": "Earliest date to return measurements from.",
+                "type": {
+                  "name": "Date",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "endOn",
+                "description": "Latest date to return measurements for (inclusive).",
+                "type": {
+                  "name": "Date",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "timezone",
+                "description": "Timezone to use for grouping. Defaults to Kraken localtime.",
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "utilityFilters",
+                "description": "Filters for each utility being measured.",
+                "type": {
+                  "name": null,
+                  "kind": "LIST",
+                  "ofType": {
+                    "name": "UtilityFiltersInput"
+                  }
+                }
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "postcode",
+            "description": "The postcode of the property.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "electricitySupplyPoints",
+            "description": "All the electricity supply points at this property.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "ElectricitySupplyPoint",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "electricityGenerationPoints",
+            "description": "All the electricity generation points at this property.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "ElectricityGenerationPoint",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "gasSupplyPoints",
+            "description": "All the gas supply points at this property.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "GasSupplyPoint",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": []
+          }
+        ]
+      },
+      "ElectricitySupplyPoint": {
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "description": null,
+            "type": {
+              "name": "ID",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "spin",
+            "description": "The supply point identification number.",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "status",
+            "description": "The meter point status.",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "SupplyPointStatus",
+                "kind": "ENUM",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "agreements",
+            "description": "The Agreements linked to this electricity supply point.",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST",
+                "ofType": {
+                  "name": "Agreement",
+                  "kind": "OBJECT",
+                  "ofType": null
+                }
+              }
+            },
+            "args": [
+              {
+                "name": "onlyActive",
+                "description": null,
+                "type": {
+                  "name": "Boolean",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "supplyDetails",
+            "description": "Historical supply details list for this account, ordered by the valid_from date in descending order.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "SupplyDetails",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "latestCosGainProcess",
+            "description": null,
+            "type": {
+              "name": "CosGainProcess",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "activeCosLossProcess",
+            "description": null,
+            "type": {
+              "name": "CosLossProcess",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "latestMoveInProcess",
+            "description": null,
+            "type": {
+              "name": "MoveInProcess",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "activeMoveOutProcess",
+            "description": null,
+            "type": {
+              "name": "MoveOutProcess",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "latestCosLossProcess",
+            "description": "The latest switch-out process active on this account.",
+            "type": {
+              "name": "CosLossProcess",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "latestMoveOutProcess",
+            "description": "The latest move-out process active on this account.",
+            "type": {
+              "name": "MoveOutProcess",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "activeAmperageChangeProcess",
+            "description": "A currently active amperage change process.",
+            "type": {
+              "name": "AmperageChangeProcess",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "canApplyAmperageChange",
+            "description": "An indication of whether a customer can apply for the change themselves.",
+            "type": {
+              "name": "Boolean",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "canUpdateMoveInDate",
+            "description": "An indication of whether the move-in date can be updated.",
+            "type": {
+              "name": "Boolean",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "canUpdateMoveOutDate",
+            "description": "An indication of whether the move-out date can be updated.",
+            "type": {
+              "name": "Boolean",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "newAmperageOptions",
+            "description": "A list of the possible amperage values to select.",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST",
+                "ofType": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "earliestAmperageChangeDate",
+            "description": "The earliest date in which an amperage change can be performed.",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "Date",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "intervalReadings",
+            "description": "Return the monthly confirmed readings associated with a given Supply Point. Restricted by the Agreement Periods.",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST",
+                "ofType": {
+                  "name": null,
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "name": "ElectricityIntervalReading"
+                  }
+                }
+              }
+            },
+            "args": [
+              {
+                "name": "productCode",
+                "description": "Base cost estimations on this product.",
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "sortOrder",
+                "description": "Sort order of the readings.",
+                "type": {
+                  "name": "IntervalReadingsSortOrder",
+                  "kind": "ENUM",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "endAt",
+                "description": "Defaults to the far future which will return the most recent readings.",
+                "type": {
+                  "name": "DateTime",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "startAt",
+                "description": "Defaults to the far future which will return the oldest readings.",
+                "type": {
+                  "name": "DateTime",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "halfHourlyReadings",
+            "description": "Fetch Half Hourly Readings for this SPIN from and to a given datetime of any version. Restricted by the Agreement Periods.",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST",
+                "ofType": {
+                  "name": null,
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "name": "ElectricityHalfHourReading"
+                  }
+                }
+              }
+            },
+            "args": [
+              {
+                "name": "fromDatetime",
+                "description": "Search for Readings where the start of the period is greater than or equal to this datetime.",
+                "type": {
+                  "name": "DateTime",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "toDatetime",
+                "description": "Search for Readings where the start of the period is less than this datetime.",
+                "type": {
+                  "name": "DateTime",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "productCode",
+                "description": "Base cost estimations on this product.",
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          },
+          {
+            "name": "nextReadingDate",
+            "description": "Date of when the next reading will be collected by the grid operator.",
+            "type": {
+              "name": "Date",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "nextNextReadingDate",
+            "description": "Date of when the reading after the next reading will be collected by the grid operator.",
+            "type": {
+              "name": "Date",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "readingDateDayOfMonth",
+            "description": "The day of the month on which the reading is collected.",
+            "type": {
+              "name": "Int",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "supplyPeriods",
+            "description": "The supply periods for the supply point.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "SupplyPeriodType",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "references",
+            "description": "References for the electricity supply point.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "ElectricitySupplyPointReference",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "meters",
+            "description": "The electricity meters associated with this supply point.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "ElectricityMeter",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "contractedCapacity",
+            "description": "The calculated capacity.",
+            "type": {
+              "name": "ContractCapacityType",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "contractedCapacityOld",
+            "description": "(Soon to be deprecated) The calculated capacity based on the agreement.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          }
+        ]
+      },
+      "SupplyPointType": {
+        "kind": "OBJECT",
+        "description": "Represents a SupplyPoint.",
+        "fields": [
+          {
+            "name": "id",
+            "description": "The ID of the supply point.",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "ID",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "marketName",
+            "description": "The market this supply point belongs to.",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "externalIdentifier",
+            "description": "The external identifier of the supply point.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "readings",
+            "description": "Get readings from a readable device e.g., a supply point, device, or register.",
+            "type": {
+              "name": "Readings",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "startAt",
+                "description": "The inclusive start of the time period as an isoformatted string.",
+                "type": {
+                  "name": null,
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "name": "DateTime"
+                  }
+                }
+              },
+              {
+                "name": "endAt",
+                "description": "The exclusive end of the time period as an isoformatted string.",
+                "type": {
+                  "name": null,
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "name": "DateTime"
+                  }
+                }
+              },
+              {
+                "name": "readingType",
+                "description": "Get readings of only this type.",
+                "type": {
+                  "name": null,
+                  "kind": "NON_NULL",
+                  "ofType": {
+                    "name": "ReadingTypes"
+                  }
+                }
+              },
+              {
+                "name": "timeGranularity",
+                "description": "Time buckets to group readings into.",
+                "type": {
+                  "name": "TimeGranularities",
+                  "kind": "ENUM",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "timezone",
+                "description": "The timezone in which to return readings.",
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "units",
+                "description": "Optional filter to return readings only for specific list of units or unit (e.g., KILOWATT_HOURS, METERS_CUBED, LITER, etc.).",
+                "type": {
+                  "name": null,
+                  "kind": "LIST",
+                  "ofType": {
+                    "name": "Units"
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "name": "property",
+            "description": "The supply point's property.",
+            "type": {
+              "name": "Property",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "devices",
+            "description": "Get list of devices under a supply point.",
+            "type": {
+              "name": "DevicesConnection",
+              "kind": "OBJECT",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "deviceIdentifiers",
+                "description": "The ids of the devices to get. If not provided, all devices for the supply point will be returned.",
+                "type": {
+                  "name": null,
+                  "kind": "LIST",
+                  "ofType": {
+                    "name": "String"
+                  }
+                }
+              },
+              {
+                "name": "before",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "after",
+                "description": null,
+                "type": {
+                  "name": "String",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "first",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              },
+              {
+                "name": "last",
+                "description": null,
+                "type": {
+                  "name": "Int",
+                  "kind": "SCALAR",
+                  "ofType": null
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "Reading": {
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "value",
+            "description": "The recorded value for this reading.",
+            "type": {
+              "name": "Decimal",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "units",
+            "description": "This reading's units.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "intervalStart",
+            "description": "The inclusive start of this reading's interval.",
+            "type": {
+              "name": "DateTime",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "intervalEnd",
+            "description": "The exclusive end of this reading's interval.",
+            "type": {
+              "name": "DateTime",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "source",
+            "description": "The source of this reading if applicable.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "quality",
+            "description": "The quality of this reading if applicable.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          }
+        ]
+      },
+      "Consumption": {
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "startDate",
+            "description": "Start date of the consumption period.",
+            "type": {
+              "name": "Date",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "endDate",
+            "description": "End date of the consumption period.",
+            "type": {
+              "name": "Date",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "quantity",
+            "description": "Amount of energy or resource consumed.",
+            "type": {
+              "name": "Decimal",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "unit",
+            "description": null,
+            "type": {
+              "name": "ConsumptionUnit",
+              "kind": "ENUM",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "usageCost",
+            "description": "Cost for the consumption usage in minor currency units.",
+            "type": {
+              "name": "Int",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "supplyCharge",
+            "description": "Supply charge amount in minor currency units.",
+            "type": {
+              "name": "Int",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          }
+        ]
+      }
+    },
+    "pricing": {
+      "ProductRate": {
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "gridOperatorCode",
+            "description": "Grid operator.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "regionOfOperation",
+            "description": "Region of operation.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "band",
+            "description": "The product rate band information.",
+            "type": {
+              "name": "String",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "validFrom",
+            "description": "Rate validity start.",
+            "type": {
+              "name": "DateTime",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "validTo",
+            "description": "Rate validity end.",
+            "type": {
+              "name": "DateTime",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "unitType",
+            "description": "What are we charging for (kWhs consumed, Days on supply, etc).",
+            "type": {
+              "name": "UnitType",
+              "kind": "ENUM",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "pricePerUnit",
+            "description": "Price per unit.",
+            "type": {
+              "name": "Decimal",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "durationMonths",
+            "description": "Duration in months for discount product rates.",
+            "type": {
+              "name": "Int",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          }
+        ]
+      },
+      "Agreement": {
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "id",
+            "description": "The ID of the agreement.",
+            "type": {
+              "name": "Int",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "validFrom",
+            "description": "The start datetime of the agreement.",
+            "type": {
+              "name": "DateTime",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "validTo",
+            "description": "The end datetime of the agreement.",
+            "type": {
+              "name": "DateTime",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "agreedFrom",
+            "description": "The datetime the agreement was entered.",
+            "type": {
+              "name": "DateTime",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "agreedTo",
+            "description": "The datetime the agreement was terminated.",
+            "type": {
+              "name": "DateTime",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "isRevoked",
+            "description": "Whether the agreement is revoked.",
+            "type": {
+              "name": "Boolean",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "rescissionDeadlineAt",
+            "description": "The deadline datetime for rescinding the agreement.",
+            "type": {
+              "name": "DateTime",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "addonRates",
+            "description": "List of add-on rates on the agreement.",
+            "type": {
+              "name": null,
+              "kind": "LIST",
+              "ofType": {
+                "name": "AddOnRateType",
+                "kind": "OBJECT",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "product",
+            "description": null,
+            "type": {
+              "name": "Product",
+              "kind": "UNION",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "params",
+            "description": "The agreement additional params.",
+            "type": {
+              "name": "GenericScalar",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          }
+        ]
+      },
+      "TariffSummary": {
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "code",
+            "description": "The tariff's product code.",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "displayName",
+            "description": "The tariff's product's human-readable name.",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "gridOperatorCode",
+            "description": "The grid operator code for this specific tariff.",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": "String",
+                "kind": "SCALAR",
+                "ofType": null
+              }
+            },
+            "args": []
+          },
+          {
+            "name": "productParams",
+            "description": "A JSON object containing extra information.",
+            "type": {
+              "name": "GenericScalar",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "tiers",
+            "description": "A list of tiers available to the tariff.",
+            "type": {
+              "name": null,
+              "kind": "NON_NULL",
+              "ofType": {
+                "name": null,
+                "kind": "LIST",
+                "ofType": {
+                  "name": "TariffTier",
+                  "kind": "OBJECT",
+                  "ofType": null
+                }
+              }
+            },
+            "args": []
+          }
+        ]
+      },
+      "SupplyDetails": {
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "amperage",
+            "description": "Supply details capacity in Amperes.",
+            "type": {
+              "name": "Int",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "kva",
+            "description": "Supply details capacity in kVA.",
+            "type": {
+              "name": "Int",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "kw",
+            "description": "Supply details capacity in kW.",
+            "type": {
+              "name": "Decimal",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "validFrom",
+            "description": "Date when supply details came into effect. This can be before the account came on supply.",
+            "type": {
+              "name": "Date",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          }
+        ]
+      }
+    },
+    "rate_limiting": {
+      "PointsAllowanceRateLimitInformation": {
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "limit",
+            "description": "The maximum number of points the viewer gets for requests per hour.",
+            "type": {
+              "name": "Int",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "remainingPoints",
+            "description": "The remaining points for the viewer in one hour time limit.",
+            "type": {
+              "name": "Int",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "usedPoints",
+            "description": "The points used so far in one hour time limit.",
+            "type": {
+              "name": "Int",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "ttl",
+            "description": "Time To Live: UNIX timestamp when the viewer will get a new allowance of points.",
+            "type": {
+              "name": "Int",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          },
+          {
+            "name": "isBlocked",
+            "description": "Whether the viewer has been blocked due to spending all its allowed points.",
+            "type": {
+              "name": "Boolean",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          }
+        ]
+      },
+      "QueryComplexityInputType": {
+        "kind": "INPUT_OBJECT",
+        "description": "Information about the complexity of the query.",
+        "fields": null
+      },
+      "QueryComplexityOutputType": {
+        "kind": "OBJECT",
+        "description": null,
+        "fields": [
+          {
+            "name": "complexityValue",
+            "description": "The complexity of the query.",
+            "type": {
+              "name": "Int",
+              "kind": "SCALAR",
+              "ofType": null
+            },
+            "args": []
+          }
+        ]
+      }
+    }
+  }
+}
