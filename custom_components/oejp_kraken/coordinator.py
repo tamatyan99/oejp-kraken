@@ -256,14 +256,7 @@ class OEJPDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
             _LOGGER.debug("Successfully updated data")
             return formatted_data
-            # Step 3: Process and format data for sensors
-            formatted_data = self._format_usage_data(usage_data)
 
-            # Step 4: Reset backoff on success
-            self._reset_backoff()
-
-            _LOGGER.debug("Successfully updated data")
-            return formatted_data
 
         except UpdateFailed:
             # Re-raise UpdateFailed as-is
@@ -340,32 +333,6 @@ class OEJPDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "total_consumption": None,
             "last_updated": dt_util.utcnow().isoformat(),
         }
-
-    def _extract_account_info(
-        self, raw_data: dict[str, Any], formatted: dict[str, Any]
-    ) -> None:
-        """Extract account information from raw data.
-
-        Args:
-            raw_data: Raw API response data.
-            formatted: Formatted data dictionary to update.
-
-        """
-        try:
-            viewer = raw_data.get("viewer", {})
-            accounts = viewer.get("accounts", [])
-            if accounts:
-                account = accounts[0]
-                agreements = account.get("electricityAgreements", [])
-                if agreements:
-                    agreement = agreements[0]
-                    meter_point = agreement.get("meterPoint", {})
-                    meter = agreement.get("meter", {})
-
-                    formatted["mpan"] = meter_point.get("mpan")
-                    formatted["serial_number"] = meter.get("serialNumber")
-        except (KeyError, IndexError, TypeError):
-            _LOGGER.debug("Could not extract account info from response")
 
     async def async_config_entry_first_refresh(self) -> None:
         """Handle first refresh with token initialization.
