@@ -14,6 +14,24 @@ from typing import TYPE_CHECKING
 
 import aiohttp
 from homeassistant.exceptions import ConfigEntryNotReady
+
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.const import Platform
+from homeassistant.core import HomeAssistant
+from homeassistant.helpers.typing import ConfigType
+
+from .const import DOMAIN
+from .coordinator import OEJPDataUpdateCoordinator
+from .graphql_client import KrakenGraphQLClient
+
+if TYPE_CHECKING:
+    from homeassistant.helpers.entity_platform import AddEntitiesCallback
+
+import logging
+from typing import TYPE_CHECKING
+
+import aiohttp
+from homeassistant.exceptions import ConfigEntryNotReady
 from typing import TYPE_CHECKING
 
 from homeassistant.config_entries import ConfigEntry
