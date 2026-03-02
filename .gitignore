@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+.sisyphus/
+new_directory/

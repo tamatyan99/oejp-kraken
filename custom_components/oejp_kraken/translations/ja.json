@@ -1,0 +1,34 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "OEJP Kraken",
+        "description": "Octopus Energy Japanアカウントの認証情報を入力してください。",
+        "data": {
+          "email": "メールアドレス",
+          "password": "パスワード"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "接続できません。ネットワークを確認してください。",
+      "invalid_auth": "認証に失敗しました。メールアドレスとパスワードを確認してください。",
+      "timeout_connect": "接続がタイムアウトしました。",
+      "unknown": "予期しないエラーが発生しました。"
+    },
+    "abort": {
+      "already_configured": "このアカウントは既に設定されています。"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "OEJP Kraken設定",
+        "description": "OEJP Kraken設定の更新間隔を設定してください。",
+        "data": {
+          "update_interval": "更新間隔（秒）"
+        }
+      }
+    }
+  }
+}
