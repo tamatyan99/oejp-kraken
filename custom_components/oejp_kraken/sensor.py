@@ -28,6 +28,11 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
+# Constants for extra_state_attributes keys
+CURRENT_POWER_ATTRS = ("last_updated",)
+DAILY_CONSUMPTION_ATTRS = ("date", "peak_consumption", "off_peak_consumption")
+RATE_INFO_ATTRS = ("tariff_name", "rate_period", "peak_rate", "off_peak_rate")
+
 
 async def async_setup_entry(
     hass: HomeAssistant,
@@ -207,9 +212,9 @@ class OEJPCurrentPowerSensor(OEJPBaseSensor):
             Dictionary containing last_update time.
 
         """
-        return self._build_attributes(["last_updated"])
+        return self._build_attributes(CURRENT_POWER_ATTRS)
 
-    def _build_attributes(self, keys: list[str]) -> dict[str, Any]:
+    def _build_attributes(self, keys: tuple[str, ...] | list[str]) -> dict[str, Any]:
         """Build attributes dict from coordinator data.
 
         Args:
@@ -309,7 +314,7 @@ class OEJPTodayConsumptionSensor(OEJPBaseSensor):
         # Add daily consumption details
         daily_consumption = self._get_coordinator_value("daily_consumption", {})
         if daily_consumption:
-            for key in ["date", "peak_consumption", "off_peak_consumption"]:
+            for key in DAILY_CONSUMPTION_ATTRS:
                 if key in daily_consumption:
                     attrs[key] = daily_consumption[key]
 
@@ -385,7 +390,7 @@ class OEJPCurrentRateSensor(OEJPBaseSensor):
         # Add rate details
         rate_info = self._get_coordinator_value("rate_info", {})
         if rate_info:
-            for key in ["tariff_name", "rate_period", "peak_rate", "off_peak_rate"]:
+            for key in RATE_INFO_ATTRS:
                 if key in rate_info:
                     attrs[key] = rate_info[key]
 
