@@ -26,6 +26,32 @@ mutation RefreshToken($input: RefreshInput!) {
 """
 
 # Data queries
+VIEWER_ACCOUNTS_QUERY = """
+query ViewerAccounts {
+    viewer {
+        accounts {
+            number
+        }
+    }
+}
+"""
+
+HALF_HOURLY_READINGS_QUERY = """
+query HalfHourlyReadings($accountNumber: String!, $fromDatetime: DateTime, $toDatetime: DateTime) {
+    account(accountNumber: $accountNumber) {
+        properties {
+            electricitySupplyPoints {
+                halfHourlyReadings(fromDatetime: $fromDatetime, toDatetime: $toDatetime) {
+                    startAt
+                    endAt
+                    version
+                    value
+                }
+            }
+        }
+    }
+}
+"""
 ELECTRICITY_USAGE_QUERY = """
 query ElectricityUsage {
     viewer {

@@ -34,25 +34,8 @@ BACKOFF_BASE_SECONDS: Final[int] = 60  # 1 minute
 BACKOFF_MAX_SECONDS: Final[int] = 900  # 15 minutes (max backoff)
 BACKOFF_MULTIPLIER: Final[int] = 2
 
-# GraphQL query for electricity usage
-ELECTRICITY_USAGE_QUERY = """
-query ElectricityUsage {
-    viewer {
-        accounts {
-            electricityAgreements {
-                validFrom
-                validTo
-                meterPoint {
-                    mpan
-                }
-                meter {
-                    serialNumber
-                }
-            }
-        }
-    }
-}
-"""
+# Import queries
+from .queries import VIEWER_ACCOUNTS_QUERY, HALF_HOURLY_READINGS_QUERY
 
 
 class OEJPDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
@@ -220,7 +203,7 @@ class OEJPDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
         This method:
         1. Checks and refreshes token if needed
-        2. Fetches electricity usage data
+        2. Fetches account number and electricity usage data
         3. Handles errors with exponential backoff
         4. Returns formatted data for sensors
 
@@ -235,13 +218,44 @@ class OEJPDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             # Step 1: Ensure valid token
             await self._async_ensure_valid_token()
 
-            # Step 2: Fetch electricity usage data
-            _LOGGER.debug("Fetching electricity usage data")
+            # Step 2a: Fetch account number
+            _LOGGER.debug("Fetching account number")
+            accounts_data = await self.graphql_client.execute_query(
+                VIEWER_ACCOUNTS_QUERY
+            )
+            
+            accounts = accounts_data.get("viewer", {}).get("accounts", [])
+            if not accounts:
+                raise UpdateFailed("No accounts found")
+            
+            account_number = accounts[0].get("number")
+            if not account_number:
+                raise UpdateFailed("Account number not found")
+            
+            _LOGGER.debug("Found account number: %s", account_number)
 
+            # Step 2b: Fetch half-hourly readings
+            _LOGGER.debug("Fetching electricity usage data")
+            from_datetime = (dt_util.utcnow() - timedelta(hours=1)).isoformat()
+            to_datetime = dt_util.utcnow().isoformat()
+            
             usage_data = await self.graphql_client.execute_query(
-                ELECTRICITY_USAGE_QUERY
+                HALF_HOURLY_READINGS_QUERY,
+                variables={
+                    "accountNumber": account_number,
+                    "fromDatetime": from_datetime,
+                    "toDatetime": to_datetime,
+                }
             )
 
+            # Step 3: Process and format data for sensors
+            formatted_data = self._format_usage_data(usage_data, account_number)
+
+            # Step 4: Reset backoff on success
+            self._reset_backoff()
+
+            _LOGGER.debug("Successfully updated data")
+            return formatted_data
             # Step 3: Process and format data for sensors
             formatted_data = self._format_usage_data(usage_data)
 
@@ -273,11 +287,12 @@ class OEJPDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             _LOGGER.error("API error: %s", err)
             raise UpdateFailed(f"API error: {err}") from err
 
-    def _format_usage_data(self, raw_data: dict[str, Any]) -> dict[str, Any]:
+    def _format_usage_data(self, raw_data: dict[str, Any], account_number: str) -> dict[str, Any]:
         """Format raw API data for sensor consumption.
 
         Args:
             raw_data: Raw data from GraphQL API.
+            account_number: The account number.
 
         Returns:
             Formatted dictionary for sensors.
@@ -286,33 +301,33 @@ class OEJPDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         if not raw_data:
             return self._create_empty_response()
 
-        # Extract relevant fields from the API response
         formatted: dict[str, Any] = {
             "last_updated": dt_util.utcnow().isoformat(),
+            "account_number": account_number,
             "raw_data": raw_data,  # Keep raw data for debugging
         }
 
-        # Map raw data fields to formatted output
-        # These fields depend on the actual GraphQL schema
-        field_mappings = [
-            ("current_usage", "current_usage"),
-            ("total_consumption", "total_consumption"),
-            ("daily_consumption", "daily_consumption"),
-            ("monthly_consumption", "monthly_consumption"),
-            ("current_rate", "current_rate"),
-            ("account", "account"),
-            ("rate_info", "rate_info"),
-        ]
-
-        for source_key, dest_key in field_mappings:
-            if source_key in raw_data:
-                formatted[dest_key] = raw_data[source_key]
-
-        # Extract account info if available
-        self._extract_account_info(raw_data, formatted)
+        try:
+            account = raw_data.get("account", {})
+            properties = account.get("properties", [])
+            if properties:
+                property_data = properties[0]
+                supply_points = property_data.get("electricitySupplyPoints", [])
+                if supply_points:
+                    readings = supply_points[0].get("halfHourlyReadings", [])
+                    if readings:
+                        # Get the most recent reading
+                        latest_reading = readings[-1]
+                        formatted["current_usage"] = float(latest_reading.get("value", 0))
+                        formatted["last_reading_time"] = latest_reading.get("endAt")
+                        
+                        # Calculate total consumption from all readings
+                        total = sum(float(r.get("value", 0)) for r in readings)
+                        formatted["total_consumption"] = total
+        except (KeyError, IndexError, TypeError, ValueError) as err:
+            _LOGGER.debug("Could not extract usage data: %s", err)
 
         return formatted
-
     def _create_empty_response(self) -> dict[str, Any]:
         """Create an empty response with default values.
 
