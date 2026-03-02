@@ -52,24 +52,6 @@ query HalfHourlyReadings($accountNumber: String!, $fromDatetime: DateTime, $toDa
     }
 }
 """
-ELECTRICITY_USAGE_QUERY = """
-query ElectricityUsage {
-    viewer {
-        accounts {
-            electricityAgreements {
-                validFrom
-                validTo
-                meterPoint {
-                    mpan
-                }
-                meter {
-                    serialNumber
-                }
-            }
-        }
-    }
-}
-"""
 
 # Future queries can be added here:
 # CONSUMPTION_QUERY = "..."
