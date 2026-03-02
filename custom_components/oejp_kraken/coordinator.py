@@ -1,10 +1,15 @@
-"""Data update coordinator for OEJP Kraken integration."""
+"""Data update coordinator for OEJP Kraken integration.
+
+This module provides the coordinator class that manages periodic data
+updates from the OEJP Kraken API, including token refresh, error handling,
+and exponential backoff.
+"""
 
 from __future__ import annotations
 
 import logging
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Final
 
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
@@ -18,15 +23,15 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 # Token refresh threshold (refresh 5 minutes before expiry)
-TOKEN_REFRESH_THRESHOLD = timedelta(minutes=5)
+TOKEN_REFRESH_THRESHOLD: Final[timedelta] = timedelta(minutes=5)
 
-# Token expiry duration
-TOKEN_EXPIRY_DURATION = timedelta(minutes=60)
+# Token expiry duration (assumed 60 minutes based on typical JWT)
+TOKEN_EXPIRY_DURATION: Final[timedelta] = timedelta(minutes=60)
 
 # Exponential backoff configuration
-BACKOFF_BASE_SECONDS = 60  # 1 minute
-BACKOFF_MAX_SECONDS = 900  # 15 minutes (max backoff)
-BACKOFF_MULTIPLIER = 2
+BACKOFF_BASE_SECONDS: Final[int] = 60  # 1 minute
+BACKOFF_MAX_SECONDS: Final[int] = 900  # 15 minutes (max backoff)
+BACKOFF_MULTIPLIER: Final[int] = 2
 
 # GraphQL query for electricity usage
 ELECTRICITY_USAGE_QUERY = """
@@ -52,31 +57,40 @@ query ElectricityUsage {
 class OEJPDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     """Coordinator to manage data updates from OEJP Kraken API.
 
-    Handles:
-    - Periodic data fetching
+    This coordinator handles:
+    - Periodic data fetching from the API
     - Automatic token refresh before expiry
-    - Exponential backoff on errors
+    - Exponential backoff on consecutive errors
     - Rate limiting awareness
+
+    Attributes:
+        graphql_client: The GraphQL client for API communication.
+
+    Example:
+        coordinator = OEJPDataUpdateCoordinator(hass, client, update_interval=300)
+        await coordinator.async_config_entry_first_refresh()
+
     """
 
     def __init__(
         self,
         hass: HomeAssistant,
         graphql_client: KrakenGraphQLClient,
+        *,
         update_interval: int = DEFAULT_UPDATE_INTERVAL,
     ) -> None:
         """Initialize the coordinator.
 
         Args:
-            hass: Home Assistant instance
-            graphql_client: GraphQL client for API communication
-            update_interval: Update interval in seconds (default: 300 = 5 minutes)
+            hass: Home Assistant instance.
+            graphql_client: GraphQL client for API communication.
+            update_interval: Update interval in seconds (default: 300 = 5 minutes).
 
         """
         self.graphql_client = graphql_client
         self._token_issued_at: datetime | None = None
-        self._consecutive_errors = 0
-        self._current_backoff = 0
+        self._consecutive_errors: int = 0
+        self._current_backoff: int = 0
 
         super().__init__(
             hass,
@@ -90,7 +104,11 @@ class OEJPDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     def token_needs_refresh(self) -> bool:
         """Check if token needs to be refreshed.
 
-        Returns True if token is close to expiry (within threshold).
+        Returns True if token is close to expiry (within threshold)
+        or if no token has been issued yet.
+
+        Returns:
+            True if token refresh is needed.
 
         """
         if self._token_issued_at is None:
@@ -102,8 +120,33 @@ class OEJPDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
 
     @property
     def current_backoff_seconds(self) -> int:
-        """Get current backoff duration in seconds."""
+        """Get current backoff duration in seconds.
+
+        Returns:
+            Current backoff duration, or 0 if not in backoff mode.
+
+        """
         return self._current_backoff
+
+    @property
+    def is_in_backoff(self) -> bool:
+        """Check if coordinator is in backoff mode.
+
+        Returns:
+            True if currently in exponential backoff mode.
+
+        """
+        return self._current_backoff > 0
+
+    @property
+    def consecutive_error_count(self) -> int:
+        """Get the number of consecutive errors.
+
+        Returns:
+            Number of consecutive failed update attempts.
+
+        """
+        return self._consecutive_errors
 
     def _calculate_backoff(self) -> int:
         """Calculate exponential backoff duration.
@@ -111,7 +154,7 @@ class OEJPDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         Pattern: 1m -> 2m -> 4m -> 8m -> 15m (max)
 
         Returns:
-            Backoff duration in seconds
+            Backoff duration in seconds.
 
         """
         backoff = BACKOFF_BASE_SECONDS * (BACKOFF_MULTIPLIER**self._consecutive_errors)
@@ -136,10 +179,10 @@ class OEJPDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         """Refresh the authentication token.
 
         Returns:
-            True if token was refreshed successfully
+            True if token was refreshed successfully.
 
         Raises:
-            UpdateFailed: If token refresh fails
+            UpdateFailed: If token refresh fails.
 
         """
         _LOGGER.debug("Refreshing authentication token")
@@ -158,7 +201,7 @@ class OEJPDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         """Ensure we have a valid token, refreshing if necessary.
 
         Raises:
-            UpdateFailed: If token cannot be obtained
+            UpdateFailed: If token cannot be obtained.
 
         """
         if self.token_needs_refresh:
@@ -175,10 +218,10 @@ class OEJPDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         4. Returns formatted data for sensors
 
         Returns:
-            Dictionary containing electricity usage data
+            Dictionary containing electricity usage data.
 
         Raises:
-            UpdateFailed: If data cannot be retrieved
+            UpdateFailed: If data cannot be retrieved.
 
         """
         try:
@@ -216,51 +259,80 @@ class OEJPDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         """Format raw API data for sensor consumption.
 
         Args:
-            raw_data: Raw data from GraphQL API
+            raw_data: Raw data from GraphQL API.
 
         Returns:
-            Formatted dictionary for sensors
+            Formatted dictionary for sensors.
 
         """
         if not raw_data:
-            return {
-                "current_usage": None,
-                "total_consumption": None,
-                "last_updated": dt_util.utcnow().isoformat(),
-            }
+            return self._create_empty_response()
 
         # Extract relevant fields from the API response
-        # Structure depends on actual GraphQL schema
-        formatted = {
+        formatted: dict[str, Any] = {
             "last_updated": dt_util.utcnow().isoformat(),
             "raw_data": raw_data,  # Keep raw data for debugging
         }
 
-        # Current usage (real-time demand in kW)
-        if "current_usage" in raw_data:
-            formatted["current_usage"] = raw_data["current_usage"]
+        # Map raw data fields to formatted output
+        # These fields depend on the actual GraphQL schema
+        field_mappings = [
+            ("current_usage", "current_usage"),
+            ("total_consumption", "total_consumption"),
+            ("daily_consumption", "daily_consumption"),
+            ("monthly_consumption", "monthly_consumption"),
+            ("current_rate", "current_rate"),
+            ("account", "account"),
+            ("rate_info", "rate_info"),
+        ]
 
-        # Total consumption (cumulative kWh)
-        if "total_consumption" in raw_data:
-            formatted["total_consumption"] = raw_data["total_consumption"]
+        for source_key, dest_key in field_mappings:
+            if source_key in raw_data:
+                formatted[dest_key] = raw_data[source_key]
 
-        # Daily consumption data
-        if "daily_consumption" in raw_data:
-            formatted["daily_consumption"] = raw_data["daily_consumption"]
-
-        # Monthly consumption data
-        if "monthly_consumption" in raw_data:
-            formatted["monthly_consumption"] = raw_data["monthly_consumption"]
-
-        # Rate information
-        if "current_rate" in raw_data:
-            formatted["current_rate"] = raw_data["current_rate"]
-
-        # Account information
-        if "account" in raw_data:
-            formatted["account"] = raw_data["account"]
+        # Extract account info if available
+        self._extract_account_info(raw_data, formatted)
 
         return formatted
+
+    def _create_empty_response(self) -> dict[str, Any]:
+        """Create an empty response with default values.
+
+        Returns:
+            Dictionary with None values and last_updated timestamp.
+
+        """
+        return {
+            "current_usage": None,
+            "total_consumption": None,
+            "last_updated": dt_util.utcnow().isoformat(),
+        }
+
+    def _extract_account_info(
+        self, raw_data: dict[str, Any], formatted: dict[str, Any]
+    ) -> None:
+        """Extract account information from raw data.
+
+        Args:
+            raw_data: Raw API response data.
+            formatted: Formatted data dictionary to update.
+
+        """
+        try:
+            viewer = raw_data.get("viewer", {})
+            accounts = viewer.get("accounts", [])
+            if accounts:
+                account = accounts[0]
+                agreements = account.get("electricityAgreements", [])
+                if agreements:
+                    agreement = agreements[0]
+                    meter_point = agreement.get("meterPoint", {})
+                    meter = agreement.get("meter", {})
+
+                    formatted["mpan"] = meter_point.get("mpan")
+                    formatted["serial_number"] = meter.get("serialNumber")
+        except (KeyError, IndexError, TypeError):
+            _LOGGER.debug("Could not extract account info from response")
 
     async def async_config_entry_first_refresh(self) -> None:
         """Handle first refresh with token initialization.
@@ -284,7 +356,7 @@ class OEJPDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         the regular update interval.
 
         Returns:
-            Time until next update
+            Time until next update.
 
         """
         if self._current_backoff > 0:
@@ -295,51 +367,3 @@ class OEJPDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             )
             return timedelta(seconds=self._current_backoff)
         return self.update_interval
-
-
-class OEJPCoordinatorResult:
-    """Container for coordinator data with metadata.
-
-    Provides consistent structure for coordinator results including
-    timing information and retry status.
-
-    """
-
-    def __init__(
-        self,
-        data: dict[str, Any],
-        last_retrieved: datetime,
-        request_attempts: int = 0,
-        last_error: Exception | None = None,
-    ) -> None:
-        """Initialize coordinator result.
-
-        Args:
-            data: The fetched data
-            last_retrieved: When data was last retrieved
-            request_attempts: Number of failed attempts before success
-            last_error: Last error encountered (if any)
-
-        """
-        self.data = data
-        self.last_retrieved = last_retrieved
-        self.request_attempts = request_attempts
-        self.last_error = last_error
-        self.next_refresh = self._calculate_next_refresh()
-
-    def _calculate_next_refresh(self) -> datetime:
-        """Calculate when the next refresh should occur."""
-        # Base refresh interval with backoff consideration
-        backoff = BACKOFF_BASE_SECONDS * (BACKOFF_MULTIPLIER**self.request_attempts)
-        backoff = min(backoff, BACKOFF_MAX_SECONDS)
-        return self.last_retrieved + timedelta(seconds=backoff)
-
-    @property
-    def is_stale(self) -> bool:
-        """Check if data is stale and needs refresh."""
-        return dt_util.utcnow() >= self.next_refresh
-
-    @property
-    def has_data(self) -> bool:
-        """Check if result contains valid data."""
-        return self.data is not None and len(self.data) > 0
